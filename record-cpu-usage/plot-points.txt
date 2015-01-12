@@ -1,0 +1,8 @@
+reset
+set term png
+set output "cpu-usage.png"
+set title "CPU usage vs. time"
+set xtics rotate
+set xlabel "Timestamp"
+set ylabel "Recorded CPU Usage"
+plot "offsetted.txt" notitle

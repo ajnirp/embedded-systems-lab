@@ -1,0 +1,15 @@
+reset
+set term png
+set output 'histogram.png'
+max=1.001 #max value
+min=0.990 #min value
+width=0.0005
+#function used to map a value to the intervals
+hist(x,width)=width*floor(x/width)+width/2.0
+set boxwidth width*0.9
+
+set xlabel "Time interval"
+set ylabel "Count of samples"
+
+#count and plot
+plot "intervals.txt" u (hist($1,width)):(1.0) smooth freq w boxes lc rgb"green" notitle
