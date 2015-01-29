@@ -1,1 +1,15 @@
 submissions/
+*.adb
+*.asm
+*.hex
+*.cdb
+*.hashes
+*.ihx
+*.lk
+*.lst
+*.map
+*.mem
+*.omf
+*.rel
+*.rst
+*.sym
