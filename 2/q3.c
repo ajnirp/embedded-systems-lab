@@ -5,14 +5,14 @@ void process(int);
 int mask(int);
 
 void main(void) {
-	int count = 0x00;
+	int num = 0x0000;
 	while(1) {
-		if(!P2_0) {
-			while(!P2_0);
-			count = count + 0x01;
-            count = count % 10000;
+		if(!P2_0 || !P2_1 || !P2_2 || !P2_3) {
+			num = num % 1000;
+			num = num * 10 + ((1-P2_3)*8 + (1-P2_2)*4 + (1-P2_1)*2 + (1-P2_0)*1);
+            while(!P2_0 || !P2_1 || !P2_2 || !P2_3);
 		}
-        process(count);
+        process(num);
 	}
 }
 
@@ -30,19 +30,19 @@ void process(int count) {
 	P1 = mask(-1);
 	P3 = 0b1110;
 	P1 = mask(count);
-	delay(0xFF, 0xDB);
+	delay(0x00, 0xEE);
 	P1 = mask(-1);
 	P3 = 0b1101;
 	P1 = mask(count/10);
-	delay(0xFF, 0xDB);
+	delay(0x00, 0xEE);
     P1 = mask(-1);
 	P3 = 0b1011;
 	P1 = mask(count/100);
-	delay(0xFF, 0xDB);
+	delay(0x00, 0xEE);
     P1 = mask(-1);
 	P3 = 0b0111;
 	P1 = mask(count/1000);
-	delay(0xFF, 0xDB);
+	delay(0x00, 0xEE);
 }
 
 int mask(int digit) {
