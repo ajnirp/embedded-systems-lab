@@ -13,3 +13,4 @@ submissions/
 *.rel
 *.rst
 *.sym
+*.DS_Store
