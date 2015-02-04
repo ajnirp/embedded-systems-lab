@@ -4,80 +4,178 @@ void delay(int, int);
 void process(int);
 int mask(int);
 
+// R1, R2, R3, R4
+// P2_3, P2_2, P2_1, P2_0
+
+// C1, C2, C3, C4
+// P2_4, P2_5, P2_6, P2_7
+
 void main(void) {
-	int num = 0x0000;
-	while(1) {
-		if(!P2_0 || !P2_1 || !P2_2 || !P2_3) {
-			num = num % 1000;
-			num = num * 10 + ((1-P2_3)*8 + (1-P2_2)*4 + (1-P2_1)*2 + (1-P2_0)*1);
-            while(!P2_0 || !P2_1 || !P2_2 || !P2_3);
-		}
-        process(num);
-	}
+    while(1) {
+        P2_7 = 0; P2_6 = 1; P2_5 = 1; P2_4 = 1;
+        if(P2_3 == 0) {
+            while(P2_3 == 0);
+            P2_7 = 1;
+            process(1);
+        } else if(P2_2 == 0) {
+            while(P2_2 == 0);
+            P2_7 = 1;
+            process(2);
+        } else if(P2_1 == 0) {
+            while(P2_1 == 0);
+            P2_7 = 1;
+            process(3);
+        } else if(P2_0 == 0) {
+            while(P2_0 == 0);
+            P2_7 = 1;
+            process(4);
+        } else process(0);
+
+        P2_7 = 1; P2_6 = 0; P2_5 = 1; P2_4 = 1;
+        if(P2_3 == 0) {
+            while(P2_3 == 0);
+            P2_6 = 1;
+            process(5);
+        } else if(P2_2 == 0) {
+            while(P2_2 == 0);
+            P2_6 = 1;
+            process(6);
+        } else if(P2_1 == 0) {
+            while(P2_1 == 0);
+            P2_6 = 1;
+            process(7);
+        } else if(P2_0 == 0) {
+            while(P2_0 == 0);
+            P2_6 = 1;
+            process(8);
+        } else process(0);
+
+        P2_7 = 1; P2_6 = 1; P2_5 = 0; P2_4 = 1;
+        if(P2_3 == 0) {
+            while(P2_3 == 0);
+            P2_5 = 1;
+            process(9);
+        } else if(P2_2 == 0) {
+            while(P2_2 == 0);
+            P2_5 = 1;
+            process(10);
+        } else if(P2_1 == 0) {
+            while(P2_1 == 0);
+            P2_5 = 1;
+            process(11);
+        } else if(P2_0 == 0) {
+            while(P2_0 == 0);
+            P2_5 = 1;
+            process(12);
+        } else process(0);
+
+        P2_7 = 1; P2_6 = 1; P2_5 = 1; P2_4 = 0;
+        if(P2_3 == 0) {
+            while(P2_3 == 0);
+            P2_4 = 1;
+            process(13);
+        } else if(P2_2 == 0) {
+            while(P2_2 == 0);
+            P2_4 = 1;
+            process(14);
+        } else if(P2_1 == 0) {
+            while(P2_1 == 0);
+            P2_4 = 1;
+            process(15);
+        } else if(P2_0 == 0) {
+            while(P2_0 == 0);
+            P2_4 = 1;
+            process(16);
+        } else process(0);
+    }
 }
 
 void delay(int n1, int n2) {
-	TMOD = 0x01;
-	TL0 = n1;
-	TH0 = n2;
-	TR0 = 1;
-	while (TF0 == 0);
-	TR0 = 0;
-	TF0 = 0;
+    TMOD = 0x01;
+    TL0 = n1;
+    TH0 = n2;
+    TR0 = 1;
+    while (TF0 == 0);
+    TR0 = 0;
+    TF0 = 0;
 }
 
-void process(int count) {
-	P1 = mask(-1);
-	P3 = 0b1110;
-	P1 = mask(count);
-	delay(0x00, 0xEE);
-	P1 = mask(-1);
-	P3 = 0b1101;
-	P1 = mask(count/10);
-	delay(0x00, 0xEE);
+static int p = 0, q = 0, r = 0, s = 0;
+void process(int num) {
+    num = num -1;
+    if (num != -1) {
+        s = r; r = q;
+        q = p; p = num;
+    }
     P1 = mask(-1);
-	P3 = 0b1011;
-	P1 = mask(count/100);
-	delay(0x00, 0xEE);
+    P3 = 0b1110;
+    P1 = mask(p);
+    delay(0x00, 0xEE);
     P1 = mask(-1);
-	P3 = 0b0111;
-	P1 = mask(count/1000);
-	delay(0x00, 0xEE);
+    P3 = 0b1101;
+    P1 = mask(q);
+    delay(0x00, 0xEE);
+    P1 = mask(-1);
+    P3 = 0b1011;
+    P1 = mask(r);
+    delay(0x00, 0xEE);
+    P1 = mask(-1);
+    P3 = 0b0111;
+    P1 = mask(s);
+    delay(0x00, 0xEE);
 }
 
 int mask(int digit) {
-   	switch(digit%10) {
-		case 0:
-			return 0b11000000;
-			break;
-		case 1:
-			return 0b11111001;
-			break;
-		case 2:
-			return 0b10100100;
-			break;
-		case 3:
-			return 0b10110000;
-			break;
-		case 4:
-			return 0b10011001;
-			break;
-		case 5:
-			return 0b10010010;
-			break;
-		case 6:
-			return 0b10000010;
-			break;
-		case 7:
-			return 0b11111000;
-			break;
-		case 8:
-			return 0b10000000;
-			break;
-		case 9:
-			return 0b10011000;
-			break;
-		default:
-		    return 0b11111111;
-	}
+    switch(digit) {
+        case 0:
+            return 0b11000000;
+            break;
+        case 1:
+            return 0b11111001;
+            break;
+        case 2:
+            return 0b10100100;
+            break;
+        case 3:
+            return 0b10110000;
+            break;
+        case 4:
+            return 0b10011001;
+            break;
+        case 5:
+            return 0b10010010;
+            break;
+        case 6:
+            return 0b10000010;
+            break;
+        case 7:
+            return 0b11111000;
+            break;
+        case 8:
+            return 0b10000000;
+            break;
+        case 9:
+            return 0b10010000;
+            break;
+        case 10:
+            return 0b10001000;
+            break;
+        case 11:
+            return 0b10000011;
+            break;
+        case 12:
+            return 0b10100111;
+            break;
+        case 13:
+            return 0b10100001;
+            break;
+        case 14:
+            return 0b10000110;
+            break;
+        case 15:
+            return 0b10001110;
+            break;
+        default:
+            return 0b11111111;
+    }
 }
