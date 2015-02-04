@@ -4,6 +4,9 @@ void delay(int, int);
 void process(int);
 int mask(int);
 
+// Top-left Switch = #12
+// i.e. R1, C1
+
 // R1, R2, R3, R4
 // P2_3, P2_2, P2_1, P2_0
 
@@ -12,78 +15,97 @@ int mask(int);
 
 void main(void) {
     while(1) {
+        // check for presses in the 4th column
         P2_7 = 0; P2_6 = 1; P2_5 = 1; P2_4 = 1;
+        // check if the button lies in the 1st row
         if(P2_3 == 0) {
-            while(P2_3 == 0);
+            while(P2_3 == 0) // debouncing as reqd.
+            	process(0); // avoid blanking out the displays
             P2_7 = 1;
-            process(1);
-        } else if(P2_2 == 0) {
-            while(P2_2 == 0);
+            process(1); // append the corresponding number
+        } else if(P2_2 == 0) { // repeat for subsequent rows
+            while(P2_2 == 0)
+            	process(0);
             P2_7 = 1;
             process(2);
         } else if(P2_1 == 0) {
-            while(P2_1 == 0);
+            while(P2_1 == 0)
+            	process(0);
             P2_7 = 1;
             process(3);
         } else if(P2_0 == 0) {
-            while(P2_0 == 0);
+            while(P2_0 == 0)
+            	process(0);
             P2_7 = 1;
             process(4);
         } else process(0);
 
+        // repeat for other columns
         P2_7 = 1; P2_6 = 0; P2_5 = 1; P2_4 = 1;
         if(P2_3 == 0) {
-            while(P2_3 == 0);
+            while(P2_3 == 0)
+            	process(0);
             P2_6 = 1;
             process(5);
         } else if(P2_2 == 0) {
-            while(P2_2 == 0);
+            while(P2_2 == 0)
+            	process(0);
             P2_6 = 1;
             process(6);
         } else if(P2_1 == 0) {
-            while(P2_1 == 0);
+            while(P2_1 == 0)
+            	process(0);
             P2_6 = 1;
             process(7);
         } else if(P2_0 == 0) {
-            while(P2_0 == 0);
+            while(P2_0 == 0)
+            	process(0);
             P2_6 = 1;
             process(8);
         } else process(0);
 
         P2_7 = 1; P2_6 = 1; P2_5 = 0; P2_4 = 1;
         if(P2_3 == 0) {
-            while(P2_3 == 0);
+            while(P2_3 == 0)
+            	process(0);
             P2_5 = 1;
             process(9);
         } else if(P2_2 == 0) {
-            while(P2_2 == 0);
+            while(P2_2 == 0)
+            	process(0);
             P2_5 = 1;
             process(10);
         } else if(P2_1 == 0) {
-            while(P2_1 == 0);
+            while(P2_1 == 0)
+            	process(0);
             P2_5 = 1;
             process(11);
         } else if(P2_0 == 0) {
-            while(P2_0 == 0);
+            while(P2_0 == 0)
+            	process(0);
             P2_5 = 1;
             process(12);
         } else process(0);
 
         P2_7 = 1; P2_6 = 1; P2_5 = 1; P2_4 = 0;
         if(P2_3 == 0) {
-            while(P2_3 == 0);
+            while(P2_3 == 0)
+            	process(0);
             P2_4 = 1;
             process(13);
         } else if(P2_2 == 0) {
-            while(P2_2 == 0);
+            while(P2_2 == 0)
+            	process(0);
             P2_4 = 1;
             process(14);
         } else if(P2_1 == 0) {
-            while(P2_1 == 0);
+            while(P2_1 == 0)
+            	process(0);
             P2_4 = 1;
             process(15);
         } else if(P2_0 == 0) {
-            while(P2_0 == 0);
+            while(P2_0 == 0)
+            	process(0);
             P2_4 = 1;
             process(16);
         } else process(0);
@@ -100,13 +122,18 @@ void delay(int n1, int n2) {
     TF0 = 0;
 }
 
+// values on displays (left-right)
 static int p = 0, q = 0, r = 0, s = 0;
+
 void process(int num) {
-    num = num -1;
+    // cycle the display only when
+    // a switch is pressed (num > 0)
+    num = num - 1;
     if (num != -1) {
         s = r; r = q;
         q = p; p = num;
     }
+    // else merely refresh displays
     P1 = mask(-1);
     P3 = 0b1110;
     P1 = mask(p);
